@@ -90,7 +90,12 @@ function BtpClient(opts) {
       this.refreshToken = headers.get(REFRESH_HEADER)
       console.log("New refresh token:", this.refreshToken)
     }
+    if (headers && headers.has(ID_TOKEN_HEADER)) {
+      console.log("ID token", headers.get(ID_TOKEN_HEADER))
+    }
+
     if (response.status == 307) {
+
       return this.post(headers.get('location'), body, subdomain, { 'x-id-token': headers.get(ID_TOKEN_HEADER), 'x-cpcli-subdomain': headers.get(SUBDOMAIN_HEADER) })
     }
   

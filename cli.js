@@ -250,6 +250,7 @@ program.command('attach')
   .addOption(new Option('-l, --landscape <landscape>', 'live or canary').choices(['live', 'canary']))
   .option('-ga, --global-account <string>', 'global account')
   .option('-sa, --sub-account <string>', 'sub account')
+  .option('--namespace', 'attach subaccount to the selected namespace only')
   .option('--from-file <filename>', 'json file with dump of BTP services (see btp-dump command)')
   .option('--platform <string>', 'platform id, you can skip it if only one platform is available')
   .option('--cluster-id <string>', 'cluster id, you can skip it if the platform has only one cluster connected')
@@ -284,6 +285,10 @@ program.command('attach')
     }
     console.log('connecting to platform ', platforms[0].name, 'with cluster id', platforms[0].clusters[0])
     let btpPlatformSecret = createPlatformSecret(platforms[0])
+    if (this.opts().namespace) {
+      btpPlatformSecret.metadata.name=this.opts().namespace+'-sap-btp-service-operator'
+      btpPlatformSecret.metadata.labels=undefined
+    }
     let clientK8s = await defaultClient(this.opts().proxyPort)
     await clientK8s.apply(btpPlatformSecret)
     console.log(`platform secret ${btpPlatformSecret.metadata.name} created in the namespace ${btpPlatformSecret.metadata.namespace}`)
